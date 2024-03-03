@@ -9,8 +9,6 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-# reference for RSA key pair: https://nitratine.net/blog/post/asymmetric-encryption-and-decryption-in-python/
-
 # key pair dictionary
 key_pairs = {}
 
@@ -45,7 +43,7 @@ def generate_key_pair(kid):
     }
 
 # RESTful JWKS endpoint
-#reference https://www.rfc-editor.org/rfc/rfc7517
+
 @app.route('/jwks', methods=['GET'])
 def jwks():
     if request.method != 'GET':
@@ -78,6 +76,7 @@ def jwks():
 # Auth endpoint 
 @app.route('/auth', methods=['POST'])
 def authenticate():
+    
         # Get the expired parameter
     expired_param = request.args.get('expired')
 
@@ -89,6 +88,8 @@ def authenticate():
             return jsonify({'error': 'Invalid key ID'}), 400
     else:
         # Use the latest valid key pair
+        if not key_pairs:
+            return jsonify({'error' : 'No valid keys available'}), 400
         valid_keys = {kid: key_data['expiration'] for kid, key_data in key_pairs.items()}
         latest_valid_key = max(valid_keys, key=valid_keys.get)
         key_data = key_pairs[latest_valid_key]
@@ -108,4 +109,5 @@ def authenticate():
 
 # run on port 8080
 if __name__ == '__main__':
+    
     app.run(port=8080, debug=False)
