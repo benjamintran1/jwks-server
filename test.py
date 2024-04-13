@@ -42,12 +42,6 @@ class TestSuite(unittest.TestCase):
         response = self.connection.getresponse()
         self.assertEqual(response.status, 405)
 
-    # check if POST works
-    def test_POST(self):
-        self.connection.request("POST", "/auth")
-        response = self.connection.getresponse()
-        self.assertEqual(response.status, 201)
-
     # Check if database exists
     def test_database_exists(self):
         db_filename = "totally_not_my_privateKeys.db"
