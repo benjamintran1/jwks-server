@@ -1,7 +1,9 @@
 How to run main application:
-1. Open terminal
-2. Locate where project2.py is
-3. Run "python project2.py"
+1. Put an .env file into the same directory as the rest of the files
+2. The .env file should have a variable named NOT_MY_KEY set to your AES KEY. ex. NOT_MY_KEY="nNOGB0kqYfz0qelm4vdfYDUYUGt59rA2cO1Lpuw+mgU="
+4. Open terminal
+5. Locate where project2.py is
+6. Run "python project2.py"
 
 test.py is used as the testsuite
 How to run test suite:
