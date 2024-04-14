@@ -9,9 +9,10 @@ import time
 import sqlite3
 import os
 import uuid
+import argon2
+import re
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
-from Crypto.Random import get_random_bytes
 from dotenv import load_dotenv
 
 #load environmental variables in python
@@ -220,17 +221,27 @@ class MyServer(BaseHTTPRequestHandler):
                 self.send_response(400) # bad request
                 self. end_headers()
                 return
-            password = str(uuid.uuid4())
-            hashed_password = str(uuid.uuid4())
+            generated_password = str(uuid.uuid4())
+            password_hasher = argon2.PasswordHasher()
+            hashed_password = password_hasher.hash(generated_password)
 
+            # Regular expression pattern to match the substring after "p="
+            pattern = r'p=(.*)'
+
+            # Search for the pattern in the hashed password
+            match = re.search(pattern, hashed_password)
+            trimmed_hash= ""
+            if match:
+                # Extract the substring after "p="
+                trimmed_hash = match.group(1)
+                
             # Insert user registration details into the database
-            conn.execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", (username, email, password))
+            conn.execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", (username, email, trimmed_hash))
             conn.commit()
 
             # Return password to the user in JSON format
-            response_data = {"password": hashed_password}
+            response_data = {"password": generated_password}
             response_body = json.dumps(response_data)
-            print(f"{username} {email} {password} ")
 
             
             
