@@ -21,9 +21,9 @@ hostName = "localhost"
 serverPort = 8080
 db_filename = "totally_not_my_privateKeys.db"
 
-print(os.environ.get('NOT_MY_KEY'))
-AES_KEY2 = os.environ.get('NOT_MY_KEY')
-AES_KEY = get_random_bytes(32)
+KEY = os.environ.get('NOT_MY_KEY')
+AES_KEY = base64.b64decode(KEY)
+
 
 def encrypt(plaintext, key):
     # Create an AES cipher object with the key and AES.MODE_ECB mode
@@ -221,10 +221,7 @@ class MyServer(BaseHTTPRequestHandler):
                 self. end_headers()
                 return
             password = str(uuid.uuid4())
-            print(f"{password}")
-            # hashed_password = hashlib.sha256(password.encode()).hexdigest()[:36]
             hashed_password = str(uuid.uuid4())
-            print(f"after hashing, pw = {hashed_password}")
 
             # Insert user registration details into the database
             conn.execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", (username, email, password))
